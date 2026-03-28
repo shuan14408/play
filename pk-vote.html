@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>創意企業大對決</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --team-a: #FF6B6B;
+    --team-a-glow: #ff4757;
+    --team-a-bg: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+    --team-b: #4ECDC4;
+    --team-b-glow: #00b894;
+    --team-b-bg: linear-gradient(135deg, #f0fffe 0%, #d4f5f2 100%);
+    --dark: #2d3436;
+    --gold: #ffd32a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #0f0f1a;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(255,107,107,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(78,205,196,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, rgba(255,211,42,0.05) 0%, transparent 40%);
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+
+  /* Title */
+  .main-title {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .main-title h1 {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--team-a) 0%, var(--gold) 50%, var(--team-b) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 4px;
+    text-shadow: none;
+    position: relative;
+    display: inline-block;
+  }
+
+  .main-title h1::after {
+    content: '⚔️';
+    display: block;
+    font-size: 2rem;
+    -webkit-text-fill-color: initial;
+    margin-top: 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+    margin-bottom: 36px;
+    letter-spacing: 2px;
+    animation: pulse-text 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-text {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; color: rgba(255,211,42,0.8); }
+  }
+
+  /* VS Badge */
+  .vs-section {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    justify-content: center;
+    position: relative;
+  }
+
+  .vs-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    box-shadow: 0 0 30px rgba(255,211,42,0.3), inset 0 0 15px rgba(255,211,42,0.1);
+    animation: vs-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes vs-pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255,211,42,0.3); }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 50px rgba(255,211,42,0.5); }
+  }
+
+  /* Team Card */
+  .team-card {
+    flex: 1;
+    max-width: 420px;
+    aspect-ratio: 1 / 1.1;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: transform 0.3s ease;
+  }
+
+  .team-card:hover { transform: translateY(-4px); }
+
+  .team-card.team-a {
+    background: linear-gradient(160deg, #1e1025 0%, #2a1530 50%, #1a0f20 100%);
+    border: 2px solid rgba(255,107,107,0.2);
+  }
+
+  .team-card.team-b {
+    background: linear-gradient(160deg, #0f1e25 0%, #152a2d 50%, #0a1a1e 100%);
+    border: 2px solid rgba(78,205,196,0.2);
+  }
+
+  .card-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .team-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  .team-a .team-label { color: var(--team-a); }
+  .team-b .team-label { color: var(--team-b); }
+
+  .team-icon {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .team-b .team-icon { animation-delay: -1.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .team-name {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Vote Count */
+  .vote-count-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .vote-number {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .vote-number.bump { transform: scale(1.3); }
+
+  .team-a .vote-number { color: var(--team-a); text-shadow: 0 0 40px rgba(255,107,107,0.4); }
+  .team-b .vote-number { color: var(--team-b); text-shadow: 0 0 40px rgba(78,205,196,0.4); }
+
+  .vote-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 4px;
+    margin-top: 4px;
+  }
+
+  /* Heart Button */
+  .heart-btn {
+    width: 80px;
+    height: 80px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .heart-btn:active { transform: scale(0.85); }
+
+  .heart-btn svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
+    transition: filter 0.3s ease;
+  }
+
+  .heart-btn:hover svg {
+    filter: drop-shadow(0 4px 25px rgba(255,107,107,0.6));
+  }
+
+  .team-b .heart-btn:hover svg {
+    filter: drop-shadow(0 4px 25px rgba(78,205,196,0.6));
+  }
+
+  /* Progress Bar */
+  .progress-section {
+    margin-top: 36px;
+    padding: 0 10px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 99px;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .progress-fill-a {
+    height: 100%;
+    background: linear-gradient(90deg, var(--team-a-glow), var(--team-a));
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 99px 0 0 99px;
+    box-shadow: 0 0 15px rgba(255,71,87,0.4);
+  }
+
+  .progress-fill-b {
+    height: 100%;
+    background: linear-gradient(90deg, var(--team-b), var(--team-b-glow));
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 0 99px 99px 0;
+    box-shadow: 0 0 15px rgba(0,184,148,0.4);
+    margin-left: auto;
+  }
+
+  /* Floating Hearts Animation */
+  .floating-heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    animation: heart-float 1.2s ease-out forwards;
+    font-size: 2rem;
+  }
+
+  @keyframes heart-float {
+    0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    50% { opacity: 0.8; transform: translateY(-80px) scale(1.3) rotate(-15deg); }
+    100% { opacity: 0; transform: translateY(-180px) scale(0.5) rotate(15deg); }
+  }
+
+  /* Burst particles */
+  .burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: burst-anim 0.7s ease-out forwards;
+  }
+
+  @keyframes burst-anim {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+  }
+
+  /* Winner crown */
+  .crown {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    filter: drop-shadow(0 2px 10px rgba(255,211,42,0.5));
+    z-index: 5;
+  }
+
+  .crown.show {
+    opacity: 1;
+    animation: crown-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes crown-bounce {
+    0% { transform: translateX(-50%) scale(0) rotate(-30deg); }
+    100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+  }
+
+  /* Card glow on leading */
+  .team-card.leading::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    z-index: 0;
+    animation: glow-rotate 3s linear infinite;
+  }
+
+  .team-a.leading::before {
+    background: conic-gradient(from 0deg, transparent, var(--team-a), transparent, transparent);
+  }
+
+  .team-b.leading::before {
+    background: conic-gradient(from 0deg, transparent, var(--team-b), transparent, transparent);
+  }
+
+  @keyframes glow-rotate {
+    to { transform: rotate(360deg); }
+  }
+
+  .team-card.leading {
+    overflow: visible;
+  }
+
+  .team-card.leading .card-inner {
+    border-radius: 22px;
+    overflow: hidden;
+  }
+
+  .team-a.leading .card-inner { background: linear-gradient(160deg, #1e1025 0%, #2a1530 50%, #1a0f20 100%); }
+  .team-b.leading .card-inner { background: linear-gradient(160deg, #0f1e25 0%, #152a2d 50%, #0a1a1e 100%); }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .vs-section { gap: 14px; }
+    .vs-badge { width: 50px; height: 50px; font-size: 1rem; }
+    .heart-btn { width: 64px; height: 64px; }
+    .team-icon { font-size: 2.5rem; }
+    .team-card { aspect-ratio: 1 / 1.2; border-radius: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="main-title">
+    <h1>創意企業大對決</h1>
+  </div>
+  <p class="subtitle">請動動手指，為喜歡的組別點下一顆愛心吧!!!!</p>
+
+  <div class="vs-section">
+    <div class="team-card team-a" id="cardA">
+      <span class="crown" id="crownA">👑</span>
+      <div class="card-inner">
+        <div class="team-label">A 組</div>
+        <div class="team-icon">☕✨</div>
+        <div class="team-name">魔法咖啡店</div>
+        <div class="vote-count-wrapper">
+          <div class="vote-number" id="countA">0</div>
+          <div class="vote-label">❤️ VOTES</div>
+        </div>
+        <button class="heart-btn" id="btnA" onclick="vote('a')">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="hgA" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff6b6b"/>
+                <stop offset="100%" style="stop-color:#ee5a24"/>
+              </linearGradient>
+            </defs>
+            <path d="M50 88 C25 70, 5 52, 5 35 C5 20, 17 10, 30 10 C38 10, 45 15, 50 22 C55 15, 62 10, 70 10 C83 10, 95 20, 95 35 C95 52, 75 70, 50 88Z" fill="url(#hgA)"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="vs-badge">VS</div>
+
+    <div class="team-card team-b" id="cardB">
+      <span class="crown" id="crownB">👑</span>
+      <div class="card-inner">
+        <div class="team-label">B 組</div>
+        <div class="team-icon">🚀💫</div>
+        <div class="team-name">差邊而過</div>
+        <div class="vote-count-wrapper">
+          <div class="vote-number" id="countB">0</div>
+          <div class="vote-label">❤️ VOTES</div>
+        </div>
+        <button class="heart-btn" id="btnB" onclick="vote('b')">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="hgB" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#4ecdc4"/>
+                <stop offset="100%" style="stop-color:#00b894"/>
+              </linearGradient>
+            </defs>
+            <path d="M50 88 C25 70, 5 52, 5 35 C5 20, 17 10, 30 10 C38 10, 45 15, 50 22 C55 15, 62 10, 70 10 C83 10, 95 20, 95 35 C95 52, 75 70, 50 88Z" fill="url(#hgB)"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span id="pctA" style="color:var(--team-a)">50%</span>
+      <span style="color:rgba(255,255,255,0.25)">即時戰況</span>
+      <span id="pctB" style="color:var(--team-b)">50%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill-a" id="barA" style="width:50%"></div>
+      <div class="progress-fill-b" id="barB" style="width:50%"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Audio Context for sound effects
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+  }
+
+  function playHeartSound(team) {
+    ensureAudio();
+    const now = audioCtx.currentTime;
+
+    // Main tone
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(team === 'a' ? 880 : 780, now);
+    osc.frequency.exponentialRampToValueAtTime(team === 'a' ? 1320 : 1170, now + 0.08);
+    osc.frequency.exponentialRampToValueAtTime(team === 'a' ? 1100 : 980, now + 0.2);
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.35);
+
+    // Sparkle
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(team === 'a' ? 1760 : 1560, now + 0.05);
+    gain2.gain.setValueAtTime(0.08, now + 0.05);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc2.connect(gain2).connect(audioCtx.destination);
+    osc2.start(now + 0.05);
+    osc2.stop(now + 0.25);
+  }
+
+  // State
+  let votes = { a: 0, b: 0 };
+
+  function vote(team) {
+    votes[team]++;
+    playHeartSound(team);
+
+    // Update count with bump
+    const countEl = document.getElementById(team === 'a' ? 'countA' : 'countB');
+    countEl.textContent = votes[team];
+    countEl.classList.add('bump');
+    setTimeout(() => countEl.classList.remove('bump'), 300);
+
+    // Floating hearts
+    const btn = document.getElementById(team === 'a' ? 'btnA' : 'btnB');
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.textContent = ['❤️','💖','💗','✨','💕'][Math.floor(Math.random()*5)];
+        heart.style.left = (cx + (Math.random()-0.5)*50) + 'px';
+        heart.style.top = cy + 'px';
+        heart.style.fontSize = (1.2 + Math.random()*1.2) + 'rem';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1300);
+      }, i * 80);
+    }
+
+    // Burst particles
+    const color = team === 'a' ? ['#ff6b6b','#ee5a24','#ff4757'] : ['#4ecdc4','#00b894','#55efc4'];
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('div');
+      p.className = 'burst';
+      const angle = (Math.PI * 2 / 8) * i + (Math.random()-0.5)*0.5;
+      const dist = 40 + Math.random()*40;
+      p.style.cssText = `
+        left: ${cx}px; top: ${cy}px;
+        background: ${color[Math.floor(Math.random()*3)]};
+        --dx: ${Math.cos(angle)*dist}px;
+        --dy: ${Math.sin(angle)*dist}px;
+        width: ${4+Math.random()*6}px;
+        height: ${4+Math.random()*6}px;
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 800);
+    }
+
+    // Update progress bar
+    updateProgress();
+
+    // Update leading state
+    updateLeading();
+  }
+
+  function updateProgress() {
+    const total = votes.a + votes.b;
+    if (total === 0) return;
+    const pA = Math.round((votes.a / total) * 100);
+    const pB = 100 - pA;
+    document.getElementById('barA').style.width = pA + '%';
+    document.getElementById('barB').style.width = pB + '%';
+    document.getElementById('pctA').textContent = pA + '%';
+    document.getElementById('pctB').textContent = pB + '%';
+  }
+
+  function updateLeading() {
+    const cardA = document.getElementById('cardA');
+    const cardB = document.getElementById('cardB');
+    const crownA = document.getElementById('crownA');
+    const crownB = document.getElementById('crownB');
+
+    cardA.classList.remove('leading');
+    cardB.classList.remove('leading');
+    crownA.classList.remove('show');
+    crownB.classList.remove('show');
+
+    if (votes.a > votes.b) {
+      cardA.classList.add('leading');
+      crownA.classList.add('show');
+    } else if (votes.b > votes.a) {
+      cardB.classList.add('leading');
+      crownB.classList.add('show');
+    }
+  }
+</script>
+
+</body>
+</html>
